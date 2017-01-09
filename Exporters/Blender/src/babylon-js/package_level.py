@@ -252,8 +252,10 @@ def write_string(file_handler, name, string, noComma = False):
         file_handler.write(',')
     file_handler.write('"' + name + '":"' + string + '"')
 
-def write_float(file_handler, name, float):
-    file_handler.write(',"' + name + '":' + format_f(float))
+def write_float(file_handler, name, float, noComma = False):
+    if noComma == False:
+        file_handler.write(',')
+    file_handler.write('"' + name + '":' + format_f(float))
 
 def write_int(file_handler, name, int, noComma = False):
     if noComma == False:
@@ -264,3 +266,22 @@ def write_bool(file_handler, name, bool, noComma = False):
     if noComma == False:
         file_handler.write(',')
     file_handler.write('"' + name + '":' + format_bool(bool))
+
+def write_dictionary(file_handler, name, dictionary, noComma = False):
+    if noComma == False:
+        file_handler.write(',')
+    file_handler.write('"' + name + '": {')
+    is_first = True
+    for key, value in dictionary.items():
+        if isinstance(value, str):
+            write_string(file_handler, key, value, is_first)
+        elif isinstance(value, int):
+            write_int(file_handler, key, value, is_first)
+        elif isinstance(value, float):
+            write_float(file_handler, key, value, is_first)
+        elif isinstance(value, bool):
+            write_bool(file_handler, key, value, is_first)
+        else:
+            raise Exception("Dictionary contains unsupported type") 
+        is_first = False
+    file_handler.write('}')

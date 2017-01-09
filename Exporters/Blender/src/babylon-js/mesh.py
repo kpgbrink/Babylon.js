@@ -46,6 +46,10 @@ class Mesh(FCurveAnimatable):
         self.castShadows = object.data.castShadows
         self.freezeWorldMatrix = object.data.freezeWorldMatrix
         self.layer = getLayer(object) # used only for lights with 'This Layer Only' checked, not exported
+        self.userData = {}
+        for key_data, value_data in object.data.items():
+            if not hasattr(bpy.types.Mesh, key_data) and isinstance(value_data, (str, int, float, bool)):
+                self.userData[key_data] = value_data
 
         # hasSkeleton detection & skeletonID determination
         hasSkeleton = False
@@ -537,6 +541,7 @@ class Mesh(FCurveAnimatable):
         write_bool(file_handler, 'isEnabled', self.isEnabled)
         write_bool(file_handler, 'checkCollisions', self.checkCollisions)
         write_bool(file_handler, 'receiveShadows', self.receiveShadows)
+        write_dictionary(file_handler, 'userData', self.userData)
 
         if hasattr(self, 'physicsImpostor'):
             write_int(file_handler, 'physicsImpostor', self.physicsImpostor)
